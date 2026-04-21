@@ -1,20 +1,24 @@
 const express = require('express');
-const { PeerServer } = require('peer');
+const { ExpressPeerServer } = require('peer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Create PeerJS server - attaches to the Express app
-const peerServer = PeerServer({
-  port: PORT,
+// Create PeerJS server
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+const peerServer = ExpressPeerServer(server, {
   path: '/peerjs',
   key: 'seestatus'
 });
+
+app.use('/peerjs', peerServer);
 
 // Test route
 app.get('/', (req, res) => {
   res.send('PeerJS Server is running!');
 });
 
-console.log(`Server running on port ${PORT}`);
 console.log(`PeerJS available at: /peerjs`);
